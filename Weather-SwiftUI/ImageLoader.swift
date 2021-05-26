@@ -10,14 +10,10 @@ import SwiftUI
 
 class ImageLoader: ObservableObject {
 	@Published var image: UIImage?
-	private let url: URL
+	
 	private var cancellable: AnyCancellable?
 	
-	init(url: URL) {
-		self.url = url
-	}
-	
-	func load() {
+	func load(url: URL) {
 		cancellable = URLSession.shared.dataTaskPublisher(for: url)
 			.map { UIImage(data: $0.data) }
 			.replaceError(with: nil)
@@ -30,19 +26,22 @@ class ImageLoader: ObservableObject {
 	}
 }
 
-struct AsyncImage<Placeholder: View>: View {
-	@ObservedObject private var loader: ImageLoader
-	private let placeholder: Placeholder?
+struct AsyncImage: View {
+	@StateObject private var loader: ImageLoader
+	@Binding private var url: URL?
 	
-	init(url: URL, placeholder: Placeholder? = nil) {
-		loader = ImageLoader(url: url)
-		self.placeholder = placeholder
+	init(url: Binding<URL?>) {
+		_url = url
+		_loader = StateObject(wrappedValue: ImageLoader())
 	}
 	
 	var body: some View {
 		image
-			.onAppear(perform: loader.load)
 			.onDisappear(perform: loader.cancel)
+			.onChange(of: url, perform: { value in
+				guard let url = value else { return }
+				loader.load(url: url)
+			})
 	}
 	
 	private var image: some View {
@@ -51,9 +50,8 @@ struct AsyncImage<Placeholder: View>: View {
 				Image(uiImage: loader.image!)
 					.resizable()
 			} else {
-				placeholder
+				Text("")
 			}
 		}
 	}
 }
-

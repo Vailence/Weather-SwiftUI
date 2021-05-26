@@ -11,10 +11,9 @@ struct MainView: View {
 	
 	@ObservedObject var viewModel: MainViewModel
 	
-	@State private var showBottomView = false
 	@State private var isEditing = false
 	@State private var searchText: String = ""
-	@State private var fadeInOut: Bool = false
+	@State private var fadeInOut = false
 	
 	var body: some View {
 		ZStack {
@@ -45,35 +44,31 @@ struct MainView: View {
 						.foregroundColor(.white)
 				}
 				
-				if let url = viewModel.iconURL {
-					AsyncImage(url: url, placeholder: Text(""))
-						.frame(width: 100, height: 100)
-						.aspectRatio(contentMode: .fit)
-				}
+				AsyncImage(url: $viewModel.iconURL)
+					.frame(width: 100, height: 100)
+					.aspectRatio(contentMode: .fit)
+
 				Spacer()
 				
-				BottomView(humidity: .constant(viewModel.humidity),
-						   visibility: .constant(viewModel.visibility),
-						   pressure: .constant(viewModel.pressure))
-					.onTapGesture {
-						showBottomView.toggle()
-					}
+				BottomView(humidity: $viewModel.humidity,
+						   visibility: $viewModel.visibility,
+						   pressure: $viewModel.pressure)
 			}
 			.padding([.horizontal, .top], 16)
 			.padding(.bottom, 32)
 		}
-		.onAppear() {
-			withAnimation(.easeInOut(duration: 1)) {
-				fadeInOut.toggle()
-			}
-		}
-		.blur(radius: fadeInOut ? 0 : 10)
+//		.onAppear() {
+//			withAnimation(.easeInOut(duration: 1)) {
+//				fadeInOut.toggle()
+//			}
+//		}
+//		.blur(radius: fadeInOut ? 0 : 10)
 		.onTapGesture {
 			self.isEditing = false
 		}
 		.alert(isPresented: $viewModel.showAlert) {
 			Alert(title: Text(viewModel.alertMessage),
-				  dismissButton: .default(Text("Got it!")))
+				  dismissButton: .cancel())
 		}
 	}
 }

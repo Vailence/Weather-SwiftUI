@@ -20,6 +20,7 @@ final class MainViewModel: ObservableObject {
 	@Published var descriptionTitle: String = "Weather"
 	@Published var alertMessage: String = ""
 	@Published var showAlert: Bool = false
+	@Published var imageShown = false
 	
 	private var cancellationToken: AnyCancellable?
 	
@@ -37,7 +38,6 @@ final class MainViewModel: ObservableObject {
 			.sink(receiveCompletion: { _ in },
 				  receiveValue: {
 					self.cityName = $0.name
-//					self.degrees = String(format: "%.0f", $0.main.temp)
 					self.updateDegrees(Int($0.main.temp))
 					self.humidity = "\($0.main.humidity) %"
 					self.visibility = String($0.visibility)
@@ -65,6 +65,7 @@ final class MainViewModel: ObservableObject {
 	
 	func setType(_ iconName: String) {
 		guard !iconName.isEmpty else { return }
+		self.imageShown = true
 		let result = iconName.filter("0123456789.".contains)
 		self.type = WeatherCondition(rawValue: result) ?? .clearSky
 	}
@@ -72,6 +73,7 @@ final class MainViewModel: ObservableObject {
 	func setNewCity(_ text: String) {
 		UserDefaults.standard.set(text, forKey: "cityName")
 		self.cityName = text
+		self.imageShown = false
 		getWeather()
 	}
 }

@@ -23,8 +23,9 @@ struct BottomView: View {
 		.frame(maxWidth: .infinity)
 		.frame(height: 70)
 		.background(
-			Color.clear
+			Color.white
 				.cornerRadius(16)
+				.opacity(0.1)
 		)
 		.overlay(
 			RoundedRectangle(cornerRadius: 16)

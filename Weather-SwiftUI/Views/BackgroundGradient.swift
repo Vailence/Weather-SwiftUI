@@ -36,11 +36,22 @@ enum WeatherCondition: String {
 struct BackgroundGradient: View {
 	@Binding var type: WeatherCondition
 	
+	@State var start = UnitPoint(x: 0, y: -2)
+	@State var end = UnitPoint(x: 4, y: 0)
+	
+	private let timer = Timer.publish(every: 1, on: .main, in: .default).autoconnect()
+	
 	var body: some View {
 		LinearGradient(gradient: Gradient(colors: type.colors),
-					   startPoint: .top,
-					   endPoint: .bottom)
+					   startPoint: start,
+					   endPoint: end)
+			.animation(Animation.easeInOut(duration: 5).repeatForever())
+			.onReceive(timer, perform: { _ in
+				self.start = UnitPoint(x: 4, y: 0)
+				self.end = UnitPoint(x: 0, y: 2)
+				self.start = UnitPoint(x: -4, y: 20)
+				self.start = UnitPoint(x: 4, y: 0)
+			})
 			.ignoresSafeArea()
 	}
 }
- 
