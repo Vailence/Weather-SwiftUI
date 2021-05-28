@@ -39,9 +39,9 @@ final class MainViewModel: ObservableObject {
 				  receiveValue: {
 					self.cityName = $0.name
 					self.updateDegrees(Int($0.main.temp))
-					self.humidity = "\($0.main.humidity) %"
+					self.humidity = "\($0.main.humidity)"
 					self.visibility = String($0.visibility)
-					self.pressure = "\($0.main.pressure) mBar"
+					self.pressure = "\($0.main.pressure)"
 					let iconName = $0.weather.first?.icon ?? ""
 					self.setType(iconName)
 					self.iconURL = URL(string: "https://openweathermap.org/img/wn/\(iconName)@2x.png")

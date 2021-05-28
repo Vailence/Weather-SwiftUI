@@ -57,12 +57,6 @@ struct MainView: View {
 			.padding([.horizontal, .top], 16)
 			.padding(.bottom, 32)
 		}
-//		.onAppear() {
-//			withAnimation(.easeInOut(duration: 1)) {
-//				fadeInOut.toggle()
-//			}
-//		}
-//		.blur(radius: fadeInOut ? 0 : 10)
 		.onTapGesture {
 			self.isEditing = false
 		}
